@@ -59,8 +59,6 @@ public class PurchaseTicketWindow extends BaseForm {
                 setUserForm(newSelection, "Room 2", 1, roomTwoTableView.getSelectionModel().getSelectedIndex());
             }
         });
-
-        System.out.println(Session.getUser());
     }
 
     private void setUserForm(TableHolderRooms selectedItem, String roomName, int roomIndex, int showingIndex){
@@ -119,16 +117,6 @@ public class PurchaseTicketWindow extends BaseForm {
         db.addTicketToShowing(roomIndex, showingIndex, amountOfSeats, ticket);
 
         this.fillTableWithData(roomOneTableView, roomList.get(roomIndex).getShowingList());
-    }
-
-    private GridPane getBasicGridPane(){
-        formMenu = new GridPane();
-        formMenu.setAlignment(Pos.CENTER);
-
-        formMenu.setHgap(10);
-        formMenu.setVgap(10);
-        formMenu.setGridLinesVisible(true);
-        return formMenu;
     }
 
     private GridPane createRoomGrids() {
@@ -193,12 +181,5 @@ public class PurchaseTicketWindow extends BaseForm {
                 )
             );
         }
-    }
-
-    public void setTableView(String option) {
-//        if (option.equalsIgnoreCase("Ticket"))
-//            layout.getChildren().set(1,  new UserListView(db,this));
-//        if (option.equalsIgnoreCase("User"))
-//            layout.getChildren().set(1, new UserListView(db,this));
     }
 }

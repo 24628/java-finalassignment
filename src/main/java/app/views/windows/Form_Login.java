@@ -97,4 +97,41 @@ public class Form_Login extends BaseForm {
         PurchaseTicketWindow mw = new PurchaseTicketWindow(db);
         mw.getStage().show();
     }
+
+    private TextField generateTextField(String title, int placement){
+        Label label = new Label(title);
+        this.form.add(label, 0, placement);
+
+        // Add description Field
+        TextField field = new TextField();
+        field.setPrefHeight(20);
+        field.setPrefWidth(400);
+        field.setMaxWidth(400);
+        this.form.add(field, 1, placement);
+
+        return field;
+    }
+    private PasswordField generatePasswordField(String title, int placement){
+        Label label = new Label(title);
+        this.form.add(label, 0, placement);
+
+        // Add description Field
+        PasswordField field = new PasswordField();
+        field.setPrefHeight(20);
+        field.setPrefWidth(400);
+        field.setMaxWidth(400);
+        this.form.add(field, 1, placement);
+
+        return field;
+    }
+    private Button generateFormBtn(String btnTitle, int placement){
+        Button btn = new Button(btnTitle);
+        btn.setPrefHeight(40);
+        btn.setDefaultButton(true);
+        btn.setPrefWidth(100);
+        this.form.add(btn, placement, 10, 2, 1);
+        GridPane.setMargin(btn, new Insets(20, 0,20,0));
+
+        return btn;
+    }
 }

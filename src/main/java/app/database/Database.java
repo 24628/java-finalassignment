@@ -33,6 +33,10 @@ public class Database {
         return roomList;
     }
 
+    public void addMovieToList(Movie movie){
+        movieList.add(movie);
+    }
+
     public void addTicketToShowing(int roomIndex, int showingIndex, int amountOfSeats, Ticket ticket){
         roomList.get(roomIndex).getShowingList().get(showingIndex).setCurrentSeats(
                 roomList.get(roomIndex).getShowingList().get(showingIndex).getCurrentSeats() - amountOfSeats
