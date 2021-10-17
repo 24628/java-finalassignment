@@ -1,8 +1,7 @@
 package app;
 
 import app.database.Database;
-import app.views.windows.Form_Login;
-import app.views.windows.MainWindow;
+import app.views.windows.PurchaseTicketWindow;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -23,7 +22,7 @@ public class MainApplication extends Application {
 //        Form_Login form = new Form_Login(db);
 //        form.getStage().show();
 
-        MainWindow mw = new MainWindow(db);
+        PurchaseTicketWindow mw = new PurchaseTicketWindow(db);
         mw.getStage().show();
 
     }

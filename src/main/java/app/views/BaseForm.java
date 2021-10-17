@@ -3,11 +3,9 @@ package app.views;
 import app.database.Database;
 import app.helpers.Session;
 import app.helpers.controls.DateTimePicker;
-import app.model.User;
 import app.views.windows.Form_Login;
-import app.views.windows.MainWindow;
+import app.views.windows.PurchaseTicketWindow;
 import javafx.event.ActionEvent;
-import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -20,9 +18,10 @@ public class BaseForm {
 
     protected Stage stage;
     protected VBox layout;
-    protected Button adminBtn;
+    protected Button addMovieBtn;
     protected Button logoutBtn;
     protected Button helpBtn;
+    protected Button addShowingBtn;
     protected GridPane form;
     protected Database db;
     private String headerName = "Purchase Tickets";
@@ -52,19 +51,14 @@ public class BaseForm {
 
         // buttons
         logoutBtn = new Button("Logout");
-        adminBtn = new Button("Admin");
+        addMovieBtn = new Button("Add Movie");
+        addShowingBtn = new Button("Add Showing");
         helpBtn = new Button("Help");
-        adminBtn.setMinWidth(296);
-        adminBtn.setMinHeight(40);
-        helpBtn.setMinWidth(296);
-        helpBtn.setMinHeight(40);
-        logoutBtn.setMinWidth(296);
-        logoutBtn.setMinHeight(40);
 
         // add all children and set alignment to right
         nav_bar.setAlignment(Pos.TOP_LEFT);
         nav_bar.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
-        nav_bar.getChildren().addAll(adminBtn, helpBtn, logoutBtn);
+        nav_bar.getChildren().addAll(addMovieBtn, helpBtn, logoutBtn, addShowingBtn);
 
         logoutBtn.setOnAction(actionEvent -> logoutFromSession());
         container.setAlignment(Pos.CENTER);
@@ -137,7 +131,7 @@ public class BaseForm {
 
     // --Open main window and close this one
     protected void openMainAndClose(ActionEvent actionEvent, String option){
-        MainWindow mainWindow = new MainWindow(db);
+        PurchaseTicketWindow mainWindow = new PurchaseTicketWindow(db);
         mainWindow.setTableView(option);
         mainWindow.getStage().show();
 

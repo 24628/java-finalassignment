@@ -2,10 +2,7 @@ package app.database;
 
 import app.enums.UserType;
 import app.helpers.SHA512;
-import app.model.Movie;
-import app.model.Room;
-import app.model.Showing;
-import app.model.User;
+import app.model.*;
 
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -14,12 +11,38 @@ import java.util.List;
 
 public class Database {
 
+    private final List<User> userList;
+    private final List<Room> roomList;
+    private final List<Movie> movieList;
+
+    public Database(){
+        userList = generateUsers();
+        roomList = generateRooms();
+        movieList = generateMovieList();
+    }
+
+    public void addShowing(Showing showing, int roomIndex){
+        roomList.get(roomIndex).addShowingList(showing);
+    }
+
     public List<User> getAllUsers(){
-        return generateUsers();
+        return userList;
     }
 
     public List<Room> getAllRooms(){
-        return generateRooms();
+        return roomList;
+    }
+
+    public void addTicketToShowing(int roomIndex, int showingIndex, int amountOfSeats, Ticket ticket){
+        roomList.get(roomIndex).getShowingList().get(showingIndex).setCurrentSeats(
+                roomList.get(roomIndex).getShowingList().get(showingIndex).getCurrentSeats() - amountOfSeats
+        );
+
+        roomList.get(roomIndex).getShowingList().get(showingIndex).addTicketToList(ticket);
+    }
+
+    public List<Movie> getAllMovies(){
+        return movieList;
     }
 
     private List<User> generateUsers(){
@@ -31,20 +54,26 @@ public class Database {
         return userList;
     }
 
+    private List<Movie> generateMovieList(){
+        List<Movie> movieList = new ArrayList<>();
+
+        movieList.add(new Movie(125, "No Time To die", 12.00));
+        movieList.add(new Movie(92, "The addams family 19", 9.00));
+
+        return movieList;
+    }
+
     private List<Room> generateRooms(){
         List<Room> roomList = new ArrayList<>();
 
         Room room1 = new Room("Room 1", 200);
         Room room2 = new Room("Room 2", 100);
 
-        Movie movieNoTimeToDie = new Movie(125, "No Time To die", 12.00);
-        Movie movieFamily = new Movie(92, "The addams family 19", 9.00);
+        room1.addShowingList(new Showing(LocalDateTime.of(2020, Month.NOVEMBER, 10, 20, 0), this.generateMovieList().get(0), room1.getSeats()));
+        room1.addShowingList(new Showing(LocalDateTime.of(2020, Month.NOVEMBER, 10, 22, 30), this.generateMovieList().get(1), room1.getSeats()));
 
-        room1.addShowingList(new Showing(LocalDateTime.of(2020, Month.NOVEMBER, 10, 20, 0), movieNoTimeToDie, room1.getSeats()));
-        room1.addShowingList(new Showing(LocalDateTime.of(2020, Month.NOVEMBER, 10, 22, 30), movieFamily, room1.getSeats()));
-
-        room2.addShowingList(new Showing(LocalDateTime.of(2020, Month.NOVEMBER, 10, 20, 0), movieFamily, room2.getSeats()));
-        room2.addShowingList(new Showing(LocalDateTime.of(2020, Month.NOVEMBER, 10, 22, 0), movieNoTimeToDie, room2.getSeats()));
+        room2.addShowingList(new Showing(LocalDateTime.of(2020, Month.NOVEMBER, 10, 20, 0), this.generateMovieList().get(1), room2.getSeats()));
+        room2.addShowingList(new Showing(LocalDateTime.of(2020, Month.NOVEMBER, 10, 22, 0), this.generateMovieList().get(0), room2.getSeats()));
 
         roomList.add(room1);
         roomList.add(room2);

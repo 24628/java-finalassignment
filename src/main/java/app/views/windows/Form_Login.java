@@ -94,7 +94,7 @@ public class Form_Login extends BaseForm {
         this.getStage().close();
 
         Session.getInstance(user);
-        MainWindow mw = new MainWindow(db);
+        PurchaseTicketWindow mw = new PurchaseTicketWindow(db);
         mw.getStage().show();
     }
 }
