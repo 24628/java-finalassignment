@@ -1,16 +1,39 @@
 package app.model;
 
-import java.util.List;
+import java.util.*;
 
 public class Room {
 
     private String title;
-    private int seats;
-    private List<Ticket> ticketList;
+    private int maxSeats;
+    private final List<Showing> showingList = new ArrayList();;
 
-    public Room(String title, int seats, List<Ticket> ticketList) {
+    public Room(String title, int maxSeats) {
         this.title = title;
-        this.seats = seats;
-        this.ticketList = ticketList;
+        this.maxSeats = maxSeats;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public int getSeats() {
+        return maxSeats;
+    }
+
+    public void setSeats(int maxSeats) {
+        this.maxSeats = maxSeats;
+    }
+
+    public List<Showing> getShowingList() {
+        return showingList;
+    }
+
+    public void addShowingList(Showing showing) {
+        this.showingList.add(showing);
     }
 }

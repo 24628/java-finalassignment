@@ -2,6 +2,7 @@ package app;
 
 import app.database.Database;
 import app.views.windows.Form_Login;
+import app.views.windows.MainWindow;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -19,11 +20,11 @@ public class MainApplication extends Application {
 
         Database db = new Database();
 
-        Form_Login form = new Form_Login(db);
-        form.getStage().show();
+//        Form_Login form = new Form_Login(db);
+//        form.getStage().show();
 
-//        MainWindow mw = new MainWindow();
-//        mw.getStage().show();
+        MainWindow mw = new MainWindow(db);
+        mw.getStage().show();
 
     }
 

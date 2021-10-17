@@ -18,16 +18,14 @@ import javafx.stage.Stage;
 
 public class BaseForm {
 
-    protected User user;
     protected Stage stage;
     protected VBox layout;
-    protected Button logoutButton;
-    protected Button dashboardButton;
-    protected Button userButton;
-    protected Button ticketButton;
-    protected VBox nav_bar;
+    protected Button adminBtn;
+    protected Button logoutBtn;
+    protected Button helpBtn;
     protected GridPane form;
     protected Database db;
+    private String headerName = "Purchase Tickets";
 
     public Stage getStage() {
         return stage;
@@ -35,14 +33,9 @@ public class BaseForm {
 
     public BaseForm(Database database) {
         db = database;
-        // create a new Stage (window)
         stage = new Stage();
-        nav_bar = this.createNavBar();
-        form = this.createGrid();
-
-        // set up the global layout and add nav
         layout = new VBox();
-        layout.getChildren().addAll(nav_bar);
+        layout.getChildren().addAll(this.createNavBar());
     }
 
     protected VBox createNavBar(){
@@ -51,60 +44,37 @@ public class BaseForm {
         HBox nav_bar = new HBox();
 
         // labels for title and description
-        Label title = new Label("NoDesk");
-        Label description = new Label("Licensed to: The Garden Group");
+        Label title = new Label(headerName);
         title.setFont(Font.font("Verdana", 30));
-        description.setFont(Font.font("Verdana", 20));
-        header.setAlignment(Pos.TOP_RIGHT);
-        header.setBackground(new Background(new BackgroundFill(Color.LIGHTGREY, CornerRadii.EMPTY, Insets.EMPTY)));
-        header.getChildren().addAll(title, description);
+        header.setAlignment(Pos.TOP_LEFT);
+        header.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
+        header.getChildren().addAll(title);
 
         // buttons
-        logoutButton = new Button("Logout");
-        dashboardButton = new Button("Dashboard");
-        userButton = new Button("Users");
-        ticketButton = new Button("Tickets");
-        dashboardButton.setMinWidth(296);
-        dashboardButton.setMinHeight(40);
-        ticketButton.setMinWidth(296);
-        ticketButton.setMinHeight(40);
-        userButton.setMinWidth(296);
-        userButton.setMinHeight(40);
-        logoutButton.setMinWidth(296);
-        logoutButton.setMinHeight(40);
+        logoutBtn = new Button("Logout");
+        adminBtn = new Button("Admin");
+        helpBtn = new Button("Help");
+        adminBtn.setMinWidth(296);
+        adminBtn.setMinHeight(40);
+        helpBtn.setMinWidth(296);
+        helpBtn.setMinHeight(40);
+        logoutBtn.setMinWidth(296);
+        logoutBtn.setMinHeight(40);
 
         // add all children and set alignment to right
-        nav_bar.setAlignment(Pos.CENTER);
-//        if(Session.isServiceDeskEmployee()) nav_bar.getChildren().addAll(logoutButton, dashboardButton, ticketButton, userButton);
-//        else nav_bar.getChildren().addAll(logoutButton, dashboardButton, ticketButton);
+        nav_bar.setAlignment(Pos.TOP_LEFT);
+        nav_bar.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
+        nav_bar.getChildren().addAll(adminBtn, helpBtn, logoutBtn);
+
+        logoutBtn.setOnAction(actionEvent -> logoutFromSession());
         container.setAlignment(Pos.CENTER);
-        container.getChildren().addAll(header, nav_bar);
+        container.getChildren().addAll(nav_bar, header);
         return container;
     }
 
-    protected GridPane createGrid(){
-        // Instantiate a new Grid Pane
-        GridPane gridPane = new GridPane();
-
-        // Position the pane at the center of the screen, both vertically and horizontally and add padding
-        gridPane.setAlignment(Pos.CENTER);
-        gridPane.setPadding(new Insets(40, 80, 40, 40));
-
-        // Set gap for row and col
-        gridPane.setHgap(10);
-        gridPane.setVgap(10);
-
-        // columnOneConstraints for both column
-        ColumnConstraints columnOneConstraints = new ColumnConstraints(150, 150, Double.MAX_VALUE);
-        columnOneConstraints.setHalignment(HPos.RIGHT);
-        ColumnConstraints columnTwoConstrains = new ColumnConstraints(150,150, Double.MAX_VALUE);
-        columnTwoConstrains.setHgrow(Priority.ALWAYS);
-
-        // Add Column Constraints
-        gridPane.getColumnConstraints().addAll(columnOneConstraints, columnTwoConstrains);
-        return gridPane;
+    protected void setHeaderName(String headerName) {
+        this.headerName = headerName;
     }
-
 
     protected DateTimePicker generateDateTimePicker(String title, int placement){
         Label label = new Label(title);
