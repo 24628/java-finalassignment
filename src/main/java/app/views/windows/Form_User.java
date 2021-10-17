@@ -2,12 +2,8 @@ package app.views.windows;
 
 import app.ICallBack;
 import app.database.Database;
-import app.helpers.controls.DateTimePicker;
-import app.helpers.dateParser;
-import app.helpers.documentHandling;
 import app.model.User;
 import app.views.BaseForm;
-import com.mongodb.client.model.Filters;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -15,17 +11,11 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import org.bson.Document;
-import org.bson.conversions.Bson;
-import java.time.ZoneId;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Form_User extends BaseForm {
-
-    // database and helpers
-    private Database db;
-    private documentHandling helper;
 
     private TextField firstName;
     private TextField lastName;
@@ -39,10 +29,9 @@ public class Form_User extends BaseForm {
     private String[] comboBoxUserTypes = {"Employee", "Service_desk"};
     private String[] comboBoxLocations = {"Amsterdam", "Haarlem", "Knuppeldam", "Headquarters (HQ)"};
 
-    public Form_User(User user) {
+    public Form_User(Database db, User user) {
+        super(db);
         // set database and helper
-        db = new Database("noSql");
-        helper = new documentHandling();
 
         // --CRUD FORM-- //
         this.addUIControls(this.form, user);
@@ -71,13 +60,8 @@ public class Form_User extends BaseForm {
         GridPane.setHalignment(headerLabel, HPos.CENTER);
         GridPane.setMargin(headerLabel, new Insets(20, 0,20,0));
 
-        Control[] formItems;
-        if (user == null)
-            formItems = this.createFormItems();
-        else{
-            headerLabel.setText("Edit User");
-            formItems = this.createFormItems(user);
-        }
+        Control[] formItems = this.createFormItems();
+
 
         // generate form buttons
         Button cancelButton = this.generateFormBtn("CANCEL", 1);
@@ -113,62 +97,8 @@ public class Form_User extends BaseForm {
         return formItems;
     }
 
-    // create form with user items filled in
-    private Control[] createFormItems(User user){
-        firstName = this.generateTextField("First Name: ", 1);
-        firstName.setText(user.getFirstName());
-
-        lastName = this.generateTextField("Last Name: ", 2);
-        lastName.setText(user.getLastName());
-
-        userType = this.generateComboBox("User Type", comboBoxUserTypes, 3 );
-        userType.getSelectionModel().select(helper.getCMBIndex((ComboBox<String>) userType, user.getUserType()));
-
-        email = this.generateTextField("Email: ", 4);
-        email.setText(user.getEmail());
-
-        phoneNumber = this.generateTextField("Phone Number: ", 5);
-        phoneNumber.setText(user.getPhoneNumber());
-
-        location = this.generateComboBox("Location: ", comboBoxLocations, 6 );
-        location.getSelectionModel().select(helper.getCMBIndex((ComboBox<String>) location, user.getLocation()));
-
-
-        Control[] formItems = { firstName, lastName, userType, email, phoneNumber, location};
-        return formItems;
-    }
-
     // Submit button event handle
     private void handleSubmitBtnClick(Control[] formItems, User user, ICallBack callBack) {
-        List<String> data = new ArrayList<String>();
 
-        // foreach item in control items, add value to data list
-        for (Control item : formItems) {
-            if(item instanceof TextField){
-                final TextField parsedTextField = (TextField) item;
-                data.add(parsedTextField.getText());
-            }
-            if(item instanceof ComboBox) {
-                final ComboBox parsedComboBox = (ComboBox) item;
-                data.add(parsedComboBox.getValue().toString());
-            }
-        }
-
-        // generate BSON document
-        String[] columnNames = {"firstName" , "lastName" , "type", "email" , "phonenumber", "location"};
-        Document document = helper.generateDocument(data, columnNames);
-
-        // if user null, insert new one, otherwise update
-        try {
-            if (user == null)
-                db.insertOne(document, "users");
-            else {
-                Bson filter = Filters.eq("email", user.getEmail());
-                db.replaceOne(filter, document, "users");
-            }
-            callBack.onSucces();
-        }catch (Exception e){
-            callBack.onError(e.toString());
-        }
     }
 }

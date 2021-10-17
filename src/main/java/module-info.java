@@ -5,7 +5,6 @@ module com.example.projectnosqllol {
     requires org.controlsfx.controls;
     requires com.dlsc.formsfx;
     requires org.kordamp.bootstrapfx.core;
-    requires mongo.java.driver;
 
     opens app to javafx.fxml;
     opens app.model;

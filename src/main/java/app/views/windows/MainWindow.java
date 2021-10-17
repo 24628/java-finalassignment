@@ -1,24 +1,23 @@
 package app.views.windows;
 
+import app.database.Database;
 import app.helpers.Session;
-import app.model.ServiceDeskEmployee;
 import app.views.BaseForm;
-import app.views.partial.TicketListView;
 import app.views.partial.UserListView;
-import app.views.partial.DashboardView;
 import javafx.scene.Scene;
 
 public class MainWindow extends BaseForm {
 
-    public MainWindow() {
+    public MainWindow(Database db) {
+        super(db);
         // --BUTTON EVENTS-- //
-        ticketButton.setOnAction(actionEvent -> layout.getChildren().set(1, new TicketListView(this)));
-        userButton.setOnAction(actionEvent -> layout.getChildren().set(1, new UserListView(this)));
-        dashboardButton.setOnAction(actionEvent -> layout.getChildren().set(1, new DashboardView(this)));
+        ticketButton.setOnAction(actionEvent -> layout.getChildren().set(1, new UserListView(db,this)));
+        userButton.setOnAction(actionEvent -> layout.getChildren().set(1, new UserListView(db,this)));
+        dashboardButton.setOnAction(actionEvent -> layout.getChildren().set(1,  new UserListView(db,this)));
         logoutButton.setOnAction(actionEvent -> logoutFromSession());
 
         // Add the menu and the view. Default view will be the student list view
-        layout.getChildren().addAll(new DashboardView(this));
+        layout.getChildren().addAll(new UserListView(db,this));
 
         // Create the main scene.
         // Scene mainScene = new StyledScene(layout);
@@ -30,14 +29,13 @@ public class MainWindow extends BaseForm {
         stage.setHeight(600);
         stage.setScene(mainScene);
 
-        System.out.println("is SD emp? " + Session.isServiceDeskEmployee());
         System.out.println(Session.getUser());
     }
 
     public void setTableView(String option){
         if (option.equalsIgnoreCase("Ticket"))
-            layout.getChildren().set(1, new TicketListView(this));
+            layout.getChildren().set(1,  new UserListView(db,this));
         if (option.equalsIgnoreCase("User"))
-            layout.getChildren().set(1, new UserListView(this));
+            layout.getChildren().set(1, new UserListView(db,this));
     }
 }

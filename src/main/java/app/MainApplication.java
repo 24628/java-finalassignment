@@ -1,10 +1,7 @@
 package app;
 
-import app.database.migrations.Migrator;
-import app.helpers.Session;
-import app.views.partial.DashboardView;
+import app.database.Database;
 import app.views.windows.Form_Login;
-import app.views.windows.MainWindow;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -19,10 +16,10 @@ public class MainApplication extends Application {
         // We should open a login window, but that is outside of scope for this lesson.
         // So we go straight to the main window of the application
 
-       new Migrator();
-       Migrator.migrationsToRun();
 
-        Form_Login form = new Form_Login();
+        Database db = new Database();
+
+        Form_Login form = new Form_Login(db);
         form.getStage().show();
 
 //        MainWindow mw = new MainWindow();

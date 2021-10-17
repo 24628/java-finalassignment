@@ -1,5 +1,6 @@
 package app.views;
 
+import app.database.Database;
 import app.helpers.Session;
 import app.helpers.controls.DateTimePicker;
 import app.model.User;
@@ -26,12 +27,14 @@ public class BaseForm {
     protected Button ticketButton;
     protected VBox nav_bar;
     protected GridPane form;
+    protected Database db;
 
     public Stage getStage() {
         return stage;
     }
 
-    public BaseForm() {
+    public BaseForm(Database database) {
+        db = database;
         // create a new Stage (window)
         stage = new Stage();
         nav_bar = this.createNavBar();
@@ -72,8 +75,8 @@ public class BaseForm {
 
         // add all children and set alignment to right
         nav_bar.setAlignment(Pos.CENTER);
-        if(Session.isServiceDeskEmployee()) nav_bar.getChildren().addAll(logoutButton, dashboardButton, ticketButton, userButton);
-        else nav_bar.getChildren().addAll(logoutButton, dashboardButton, ticketButton);
+//        if(Session.isServiceDeskEmployee()) nav_bar.getChildren().addAll(logoutButton, dashboardButton, ticketButton, userButton);
+//        else nav_bar.getChildren().addAll(logoutButton, dashboardButton, ticketButton);
         container.setAlignment(Pos.CENTER);
         container.getChildren().addAll(header, nav_bar);
         return container;
@@ -164,7 +167,7 @@ public class BaseForm {
 
     // --Open main window and close this one
     protected void openMainAndClose(ActionEvent actionEvent, String option){
-        MainWindow mainWindow = new MainWindow();
+        MainWindow mainWindow = new MainWindow(db);
         mainWindow.setTableView(option);
         mainWindow.getStage().show();
 
@@ -176,7 +179,7 @@ public class BaseForm {
         this.getStage().close();
         Session.destroy();
 
-        Form_Login form = new Form_Login();
+        Form_Login form = new Form_Login(db);
         form.getStage().show();
     }
 }

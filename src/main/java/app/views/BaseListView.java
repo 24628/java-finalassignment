@@ -15,8 +15,8 @@ public class BaseListView extends VBox {
     protected Database db;
     protected TableView<BaseModel> table;
 
-    public BaseListView(){
-        db = new Database("noSql");
+    public BaseListView(Database database){
+        db = database;
     }
 
 

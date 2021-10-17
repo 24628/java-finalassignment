@@ -1,6 +1,5 @@
 package app.helpers;
 
-import app.model.ServiceDeskEmployee;
 import app.model.User;
 
 public final class Session {
@@ -27,7 +26,8 @@ public final class Session {
         instance = null;
     }
 
-    public static boolean isServiceDeskEmployee(){
+    /*public static boolean isServiceDeskEmployee(){
         return user instanceof ServiceDeskEmployee;
     }
+     */
 }

@@ -1,45 +1,36 @@
 package app.views.windows;
 
-import app.ICallBack;
 import app.database.Database;
 import app.helpers.SHA512;
 import app.helpers.Session;
-import app.helpers.dateParser;
-import app.helpers.documentHandling;
-import app.model.Employee;
-import app.model.ServiceDeskEmployee;
 import app.model.User;
 import app.views.BaseForm;
-import com.mongodb.client.model.Filters;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import org.bson.Document;
-import org.bson.conversions.Bson;
 
-import java.text.ParseException;
-import java.util.Objects;
+import java.util.List;
 
 public class Form_Login extends BaseForm {
 
-    private Database db;
-    private documentHandling helper;
 
     // all form items
     private TextField emailField;
     private PasswordField passwordField;
 
 
-    public Form_Login() {
+    public Form_Login(Database db) {
+        super(db);
         // db conn
         //db = new Database("ProjectNoSQL");
-        db = new Database("noSql");
-        helper = new documentHandling();
 
         // --CRUD FORM-- //
         this.addUIControls(this.form);
@@ -49,7 +40,7 @@ public class Form_Login extends BaseForm {
         Scene Form_Login = new Scene(layout);
 
         // Let's go!
-        stage.setTitle("Form Ticket");
+        stage.setTitle("Form Login");
         stage.setScene(Form_Login);
 
     }
@@ -73,64 +64,37 @@ public class Form_Login extends BaseForm {
         Button submitButton = this.generateFormBtn("LOGIN", 0);
 
         submitButton.setOnAction(actionEvent -> {
-            try {
-                this.handleSubmitBtnClick(new ICallBack() {
-                    public void onSucces() {}
-                    public void onError(String err) {}
-                });
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+                this.handleSubmitBtnClick();
         });
     }
 
-    protected void handleSubmitBtnClick(ICallBack callBack) throws ParseException {
+    private void handleSubmitBtnClick() {
         String email = emailField.getText();
         String password = passwordField.getText();
 
-        Bson filter = Filters.and(
-                Filters.eq("email", email),
-                Filters.eq("password", SHA512.encryptThisString(password))
-        );
+        User loggedInUser = findUser(db.getAllUsers(), email, password);
+        if(loggedInUser == null)
+            return;
 
-        Document result = db.findOne(filter, "users");
-        System.out.println(result);
+        Session.getInstance(loggedInUser);
 
-        if(result != null){
-            if(Objects.equals(result.getString("type"), "Service_desk")){
 
-                System.out.println("SD employee");
-                ServiceDeskEmployee user = new ServiceDeskEmployee(
-                    result.get("firstName").toString(),
-                    result.get("lastName").toString(),
-                    result.get("type").toString(),
-                    result.get("email").toString(),
-                    result.get("phonenumber").toString(),
-                    result.get("location").toString()
-                );
+    }
 
-                loadNewWindow(user);
-            } else {
-                System.out.println("Employee");
-                Employee user = new Employee(
-                        result.get("firstName").toString(),
-                        result.get("lastName").toString(),
-                        result.get ("type").toString(),
-                        result.get("email").toString(),
-                        result.get("phonenumber").toString(),
-                        result.get("location").toString()
-                );
-
-                loadNewWindow(user);
+    private User findUser(List<User> userList, String email, String password){
+        for (User u : userList) {
+            if (u.getEmail().equals(email) && u.getPassword().equals(SHA512.encryptThisString(password))) {
+                return u;
             }
         }
+        return null;
     }
 
     private void loadNewWindow(User user){
         this.getStage().close();
 
         Session.getInstance(user);
-        MainWindow mw = new MainWindow();
+        MainWindow mw = new MainWindow(db);
         mw.getStage().show();
     }
 }
