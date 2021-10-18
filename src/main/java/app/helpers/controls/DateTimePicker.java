@@ -37,6 +37,7 @@ public class DateTimePicker extends DatePicker {
         setConverter(new InternalConverter());
         alignColumnCountWithFormat();
 
+        // if u ask why? this is to force an update on key released event because it has to deal with race conditions! don't ask me why, but it works this way!
         this.addEventFilter(KeyEvent.KEY_RELEASED, keyEvent -> {
             try {
                 this.setDateTimeValue(LocalDateTime.parse(this.getEditor().getText(), formatter));
@@ -51,7 +52,7 @@ public class DateTimePicker extends DatePicker {
             }
         });
 
-        // Syncronize changes to the underlying date value back to the dateTimeValue
+        // Synchronize changes to the underlying date value back to the dateTimeValue
         valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null) {
                 dateTimeValue.set(null);
@@ -65,7 +66,7 @@ public class DateTimePicker extends DatePicker {
             }
         });
 
-        // Syncronize changes to dateTimeValue back to the underlying date value
+        // Synchronize changes to dateTimeValue back to the underlying date value
         dateTimeValue.addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 LocalDate dateValue = newValue.toLocalDate();

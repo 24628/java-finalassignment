@@ -25,7 +25,7 @@ public class AddMovieWindow extends BaseForm {
     private final TextField movieTitle = new TextField();
     private final Button createMovieBtn = new Button("Create Movie");
     private final Button clearFormBtn = new Button("Clear");
-    TableView<Movie> tableView = generateTable();
+    TableView<Movie> tableView = generateTableForMovie();
 
     public AddMovieWindow(Database database) {
         super(database);
@@ -85,7 +85,7 @@ public class AddMovieWindow extends BaseForm {
             String title = movieTitle.getText();
             db.addMovieToList(new Movie(min, title, price));
 
-            this.fillTableWithData(this.tableView, db.getAllMovies());
+            this.fillTableWithMovieData(this.tableView, db.getAllMovies());
         });
 
         clearFormBtn.setOnAction(actionEvent -> {
@@ -98,12 +98,12 @@ public class AddMovieWindow extends BaseForm {
     private TableView<Movie> createMovieGrid() {
         String[] columnNames = {"durationInMinutes", "Price", "Title"};
 
-        this.generateData(this.tableView, columnNames);
-        this.fillTableWithData(this.tableView ,db.getAllMovies());
+        this.generateDataForMovie(this.tableView, columnNames);
+        this.fillTableWithMovieData(this.tableView ,db.getAllMovies());
         return this.tableView;
     }
 
-    private TableView<Movie> generateTable() {
+    protected TableView<Movie> generateTableForMovie() {
         TableView<Movie> table = new TableView<Movie>();
         table.setEditable(true);
         table.getSelectionModel().setCellSelectionEnabled(false); // false = row selection
@@ -112,7 +112,7 @@ public class AddMovieWindow extends BaseForm {
         return table;
     }
 
-    private void generateData(TableView<Movie> table, String[] columnNames) {
+    private void generateDataForMovie(TableView<Movie> table, String[] columnNames) {
         for (String name : columnNames) {
             TableColumn<Movie, String> colType = new TableColumn<>(name);
             colType.setSortable(false);
@@ -121,12 +121,11 @@ public class AddMovieWindow extends BaseForm {
         }
     }
 
-    private void fillTableWithData(TableView<Movie> table, List<Movie> movies) {
+    private void fillTableWithMovieData(TableView<Movie> table, List<Movie> movies) {
         table.getItems().clear();
 
         DecimalFormat df = new DecimalFormat("#.00");
 
-        //@todo Fix remove t from date string here!
         for (Movie movie : movies) {
             table.getItems().addAll(movie);
         }

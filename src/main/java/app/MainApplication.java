@@ -2,6 +2,7 @@ package app;
 
 import app.database.Database;
 import app.views.windows.AddMovieWindow;
+import app.views.windows.AddShowingWindow;
 import app.views.windows.PurchaseTicketWindow;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -26,7 +27,10 @@ public class MainApplication extends Application {
 //        PurchaseTicketWindow mw = new PurchaseTicketWindow(db);
 //        mw.getStage().show();
 //
-        AddMovieWindow mw = new AddMovieWindow(db);
+//        AddMovieWindow mw = new AddMovieWindow(db);
+//        mw.getStage().show();
+
+        AddShowingWindow mw = new AddShowingWindow(db);
         mw.getStage().show();
 
     }

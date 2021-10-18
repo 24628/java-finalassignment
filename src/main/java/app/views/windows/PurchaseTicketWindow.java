@@ -23,16 +23,10 @@ import java.util.List;
 
 public class PurchaseTicketWindow extends BaseForm {
 
-    private VBox formHolders = new VBox();
-    private GridPane formMenu = new GridPane();
-    private Label warningMessage = new Label();
-    private final TableView<TableHolderRooms> roomOneTableView = generateTable();
-    private final TableView<TableHolderRooms> roomTwoTableView = generateTable();
     private final NumberTextField numberOfSeatsTextField = new NumberTextField();
     private final TextField ticketNameTextField = new TextField();
     private final Button purchaseBtn = new Button("Purchase");
     private final Button clearBtnForCreatingTickets = new Button("Clear");
-    private final List<Room> roomList = db.getAllRooms();
 
     public PurchaseTicketWindow(Database db) {
         super(db);
@@ -116,70 +110,8 @@ public class PurchaseTicketWindow extends BaseForm {
         Ticket ticket = new Ticket(amountOfSeats, ticketName);
         db.addTicketToShowing(roomIndex, showingIndex, amountOfSeats, ticket);
 
-        this.fillTableWithData(roomOneTableView, roomList.get(roomIndex).getShowingList());
+        this.fillTableWithData(roomOneTableView, db.getAllRooms().get(roomIndex).getShowingList());
     }
 
-    private GridPane createRoomGrids() {
-        GridPane gridPane = new GridPane();
 
-        gridPane.setAlignment(Pos.CENTER);
-
-        gridPane.setHgap(10);
-        gridPane.setVgap(10);
-        gridPane.setGridLinesVisible(true);
-
-        String[] columnNames = {"Start", "End", "Title", "Seats", "Price"};
-
-        this.generateData(roomOneTableView, columnNames);
-        this.fillTableWithData(roomOneTableView, roomList.get(0).getShowingList());
-
-        this.generateData(roomTwoTableView, columnNames);
-        this.fillTableWithData(roomTwoTableView, roomList.get(1).getShowingList());
-
-        GridPane.setHgrow(roomOneTableView, Priority.ALWAYS);
-        GridPane.setHgrow(roomTwoTableView, Priority.ALWAYS);
-
-        gridPane.add(new Label(roomList.get(0).getTitle()), 0, 0, 1, 1);
-        gridPane.add(roomOneTableView, 0, 1, 1, 1);
-        gridPane.add(new Label(roomList.get(1).getTitle()), 1, 0, 1, 1);
-        gridPane.add(roomTwoTableView, 1, 1, 1, 1);
-        return gridPane;
-    }
-
-    private TableView<TableHolderRooms> generateTable() {
-        TableView<TableHolderRooms> table = new TableView<TableHolderRooms>();
-        table.setEditable(true);
-        table.getSelectionModel().setCellSelectionEnabled(false); // false = row selection
-        table.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        return table;
-    }
-
-    private void generateData(TableView<TableHolderRooms> table, String[] columnNames) {
-        for (String name : columnNames) {
-            TableColumn<TableHolderRooms, String> colType = new TableColumn<>(name);
-            colType.setSortable(false);
-            colType.setCellValueFactory(new PropertyValueFactory<>(name));
-            table.getColumns().add(colType);
-        }
-    }
-
-    private void fillTableWithData(TableView<TableHolderRooms> table, List<Showing> showings) {
-        table.getItems().clear();
-
-        DecimalFormat df = new DecimalFormat("#.00");
-
-        //@todo Fix remove t from date string here!
-        for (Showing showing : showings) {
-            table.getItems().addAll(
-                new TableHolderRooms(
-                    showing.getStartTime().toString(),
-                    showing.getStartTime().plusMinutes(showing.getMovie().getDurationInMinutes()).toString(),
-                    showing.getMovie().getTitle(),
-                    String.valueOf(showing.getCurrentSeats()),
-                    df.format(showing.getMovie().getPrice())
-                )
-            );
-        }
-    }
 }
