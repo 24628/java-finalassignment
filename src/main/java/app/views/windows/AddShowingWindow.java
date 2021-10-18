@@ -6,14 +6,13 @@ import app.helpers.controls.DateTimePicker;
 import app.model.Movie;
 import app.model.Room;
 import app.model.Showing;
-import app.model.TableHolderRooms;
 import app.views.BaseForm;
 import javafx.collections.FXCollections;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
+import javafx.scene.input.KeyEvent;
 import javafx.util.StringConverter;
 
 import java.text.DecimalFormat;
@@ -24,7 +23,7 @@ public class AddShowingWindow extends BaseForm {
     private ComboBox<Room> roomComboBox = new ComboBox<Room>();
     private ComboBox<Movie> movieComboBox = new ComboBox<Movie>();
     private DateTimePicker dateTimePicker = new DateTimePicker();
-    private final Button addShowingBtnToRoom = new Button("Purchase");
+    private final Button addShowingBtnToRoom = new Button("Add Showing");
     private final Button clearBtnForCreatingShowing = new Button("Clear");
     private final Label nOfSeats = new Label();
     private final Label movieEndTime = new Label();
@@ -90,7 +89,16 @@ public class AddShowingWindow extends BaseForm {
             fillFormCorrectly();
         });
 
+        //TO initialize
         dateTimePicker.valueProperty().addListener((obs, oldVal, newVal) -> {
+            System.out.println("i dod update not?");
+            currentSelectedLocalDateTime = dateTimePicker.getDateTimeValue();
+            fillFormCorrectly();
+        });
+
+        //IF there is a change on typing we need to still force update the forms to show correct time stamp!
+        dateTimePicker.addEventFilter(KeyEvent.KEY_RELEASED, keyEvent -> {
+            System.out.println("i dod update not?");
             currentSelectedLocalDateTime = dateTimePicker.getDateTimeValue();
             fillFormCorrectly();
         });
@@ -155,14 +163,21 @@ public class AddShowingWindow extends BaseForm {
             }
 
             for (Showing showing : selectedRoom.getShowingList()) {
+                System.out.println( showing.getStartTime().minusMinutes(15).isAfter(dateTimePicker.getDateTimeValue()));
+                System.out.println( showing.getStartTime().plusMinutes(selectedMovie.getDurationInMinutes() + 15).isBefore(dateTimePicker.getDateTimeValue()));
                 if (
-                        showing.getStartTime().minusMinutes(15).isAfter(dateTimePicker.getDateTimeValue()) &&
-                                showing.getStartTime().minusMinutes(selectedMovie.getDurationInMinutes() + 15).isBefore(dateTimePicker.getDateTimeValue())) {
+                        showing.getStartTime().minusMinutes(15).isBefore(dateTimePicker.getDateTimeValue()) &&
+                                showing.getStartTime().plusMinutes(selectedMovie.getDurationInMinutes() + 15).isAfter(dateTimePicker.getDateTimeValue())) {
                     warningMessage.setText("there is already a movie planned in this time stamp!");
                     return;
                 }
             }
 
+            selectedRoom.addShowingList(new Showing(currentSelectedLocalDateTime, selectedMovie, selectedRoom.getSeats()));
+            if(selectedRoom.getTitle().contains("1"))
+                this.fillTableWithData(roomOneTableView, selectedRoom.getShowingList());
+            else
+                this.fillTableWithData(roomTwoTableView, selectedRoom.getShowingList());
 
             System.out.println("IT WORKS!");
         });
@@ -179,14 +194,5 @@ public class AddShowingWindow extends BaseForm {
         });
 
         formHolders.getChildren().set(0,this.formMenu);
-    }
-
-    private ComboBox<String> generateComboBox(String[] comboBoxItems){
-        ComboBox<String> comboBox = new ComboBox<>();
-        comboBox.setPrefWidth(400);
-        comboBox.getItems().addAll(comboBoxItems);
-        comboBox.getSelectionModel().selectFirst();
-
-        return comboBox;
     }
 }

@@ -1,25 +1,16 @@
 package app.views.windows;
 
 import app.database.Database;
-import app.helpers.Session;
 import app.helpers.controls.NumberTextField;
-import app.model.Room;
-import app.model.Showing;
 import app.model.TableHolderRooms;
 import app.model.Ticket;
 import app.views.BaseForm;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
-import org.controlsfx.control.spreadsheet.Grid;
-
-import java.lang.reflect.Field;
-import java.text.DecimalFormat;
-import java.util.List;
 
 public class PurchaseTicketWindow extends BaseForm {
 
@@ -43,19 +34,19 @@ public class PurchaseTicketWindow extends BaseForm {
         roomOneTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
                 System.out.println(newSelection.getTitle() + " Room one");
-                setUserForm(newSelection, "Room 1", 0, roomOneTableView.getSelectionModel().getSelectedIndex());
+                setUserForm(newSelection, "Room 1", 0, roomOneTableView.getSelectionModel().getSelectedIndex(), roomOneTableView);
             }
         });
 
         roomTwoTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
                 System.out.println(newSelection.getTitle() + " Room two");
-                setUserForm(newSelection, "Room 2", 1, roomTwoTableView.getSelectionModel().getSelectedIndex());
+                setUserForm(newSelection, "Room 2", 1, roomTwoTableView.getSelectionModel().getSelectedIndex(), roomTwoTableView);
             }
         });
     }
 
-    private void setUserForm(TableHolderRooms selectedItem, String roomName, int roomIndex, int showingIndex){
+    private void setUserForm(TableHolderRooms selectedItem, String roomName, int roomIndex, int showingIndex, TableView tableView){
         GridPane formMenu = getBasicGridPane();
 
         formMenu.add(new Label("Room:"), 0, 0, 1, 1);
@@ -78,7 +69,7 @@ public class PurchaseTicketWindow extends BaseForm {
         formMenu.add(clearBtnForCreatingTickets, 4, 2, 1, 1);
 
 
-        purchaseBtn.setOnAction(actionEvent -> addTicketToShowing(roomIndex, showingIndex, selectedItem.getSeats()));
+        purchaseBtn.setOnAction(actionEvent -> addTicketToShowing(roomIndex, showingIndex, selectedItem.getSeats(), tableView));
         clearBtnForCreatingTickets.setOnAction(actionEvent -> {
             numberOfSeatsTextField.setText("");
             ticketNameTextField.setText("");
@@ -86,7 +77,7 @@ public class PurchaseTicketWindow extends BaseForm {
         formHolders.getChildren().set(0,formMenu);
     }
 
-    private void addTicketToShowing(int roomIndex, int showingIndex, String seats){
+    private void addTicketToShowing(int roomIndex, int showingIndex, String seats, TableView tableView){
         warningMessage.setText("");
         if(numberOfSeatsTextField.getText() == null){
             warningMessage.setText("Fill in the amount of seats!");
@@ -110,7 +101,7 @@ public class PurchaseTicketWindow extends BaseForm {
         Ticket ticket = new Ticket(amountOfSeats, ticketName);
         db.addTicketToShowing(roomIndex, showingIndex, amountOfSeats, ticket);
 
-        this.fillTableWithData(roomOneTableView, db.getAllRooms().get(roomIndex).getShowingList());
+        this.fillTableWithData(tableView, db.getAllRooms().get(roomIndex).getShowingList());
     }
 
 
