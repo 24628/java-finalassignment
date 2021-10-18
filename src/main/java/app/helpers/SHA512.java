@@ -5,8 +5,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class SHA512 {
-    public static String encryptThisString(String input)
-    {
+    public static String encryptThisString(String input) {
         try {
             // getInstance() method is called with algorithm SHA-512
             MessageDigest md = MessageDigest.getInstance("SHA-512");

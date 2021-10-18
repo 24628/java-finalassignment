@@ -15,29 +15,29 @@ public class Database {
     private final List<Room> roomList;
     private final List<Movie> movieList;
 
-    public Database(){
+    public Database() {
         userList = generateUsers();
         roomList = generateRooms();
         movieList = generateMovieList();
     }
 
-    public void addShowing(Showing showing, int roomIndex){
+    public void addShowing(Showing showing, int roomIndex) {
         roomList.get(roomIndex).addShowingList(showing);
     }
 
-    public List<User> getAllUsers(){
+    public List<User> getAllUsers() {
         return userList;
     }
 
-    public List<Room> getAllRooms(){
+    public List<Room> getAllRooms() {
         return roomList;
     }
 
-    public void addMovieToList(Movie movie){
+    public void addMovieToList(Movie movie) {
         movieList.add(movie);
     }
 
-    public void addTicketToShowing(int roomIndex, int showingIndex, int amountOfSeats, Ticket ticket){
+    public void addTicketToShowing(int roomIndex, int showingIndex, int amountOfSeats, Ticket ticket) {
         roomList.get(roomIndex).getShowingList().get(showingIndex).setCurrentSeats(
                 roomList.get(roomIndex).getShowingList().get(showingIndex).getCurrentSeats() - amountOfSeats
         );
@@ -45,11 +45,11 @@ public class Database {
         roomList.get(roomIndex).getShowingList().get(showingIndex).addTicketToList(ticket);
     }
 
-    public List<Movie> getAllMovies(){
+    public List<Movie> getAllMovies() {
         return movieList;
     }
 
-    private List<User> generateUsers(){
+    private List<User> generateUsers() {
         List<User> userList = new ArrayList<>();
 
         userList.add(new User("John", "Doe", UserType.admin, "JohnDoe@example.com", "0678787878", SHA512.encryptThisString("password")));
@@ -58,7 +58,7 @@ public class Database {
         return userList;
     }
 
-    private List<Movie> generateMovieList(){
+    private List<Movie> generateMovieList() {
         List<Movie> movieList = new ArrayList<>();
 
         movieList.add(new Movie(125, "No Time To die", 12.00));
@@ -67,7 +67,7 @@ public class Database {
         return movieList;
     }
 
-    private List<Room> generateRooms(){
+    private List<Room> generateRooms() {
         List<Room> roomList = new ArrayList<>();
 
         Room room1 = new Room("Room 1", 200);

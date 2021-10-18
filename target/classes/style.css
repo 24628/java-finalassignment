@@ -1,0 +1,43 @@
+.root{
+    -fx-font-size: 8pt;
+    -fx-font-family: "Courier New";
+    -fx-background-color: #FFFFFF;
+}
+
+.navbar-btn {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 13pt;
+    -fx-background-color: transparent;
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+    -fx-padding: 5;
+}
+
+.table-view .column-header {
+    -fx-font-size: 9pt;
+}
+
+.table-view .table-cell {
+    -fx-text-fill: #FFFFFF;
+    -fx-border-color: transparent;
+    -fx-padding: 2 0 2 10px;
+}
+
+.table-row-cell: odd {
+    -fx-background-color: #4a0c63;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em;
+}
+.table-row-cell: even {
+    -fx-background-color: #46155a;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em;
+}
+
+.gridpane-padding {
+    -fx-padding: 30px 20px;
+}
+
+.grid-pane > * {
+    -fx-min-width: 80px;
+}

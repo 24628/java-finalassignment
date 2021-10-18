@@ -1,10 +1,10 @@
 package app.views.windows;
 
 import app.database.Database;
+import app.helpers.controls.CustomSubmitBtn;
 import app.helpers.controls.NumberTextField;
 import app.model.Movie;
-import app.views.BaseForm;
-import javafx.scene.Scene;
+import app.views.BaseVBoxLayout;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
@@ -13,7 +13,7 @@ import javafx.scene.layout.VBox;
 import java.text.DecimalFormat;
 import java.util.List;
 
-public class AddMovieWindow extends BaseForm {
+public class AddMovieWindow extends BaseVBoxLayout {
 
     private VBox formHolders = new VBox();
     private GridPane formMenu = new GridPane();
@@ -21,26 +21,21 @@ public class AddMovieWindow extends BaseForm {
     private final NumberTextField minutesDurationField = new NumberTextField();
     private final TextField moviePrice = new TextField();
     private final TextField movieTitle = new TextField();
-    private final Button createMovieBtn = new Button("Create Movie");
+    private final Button createMovieBtn = new CustomSubmitBtn("Create Movie");
     private final Button clearFormBtn = new Button("Clear");
     TableView<Movie> tableView = generateTableForMovie();
 
     public AddMovieWindow(Database database) {
         super(database);
 
-        Scene mainScene = new Scene(layout);
-
-        this.setHeaderName("Add Movie");
-        stage.setWidth(1500);
-        stage.setHeight(900);
-        stage.setScene(mainScene);
+        System.out.println("ELLO!");
 
         setMovieForm();
         formHolders.getChildren().addAll(this.formMenu, warningMessage);
-        layout.getChildren().addAll(this.createMovieGrid(), formHolders);
+        this.getChildren().addAll(this.createMovieTableView(), formHolders);
     }
 
-    private void setMovieForm(){
+    private void setMovieForm() {
         this.formMenu = getBasicGridPane();
 
         this.formMenu.add(new Label("Minutes"), 0, 0, 1, 1);
@@ -57,17 +52,17 @@ public class AddMovieWindow extends BaseForm {
 
         createMovieBtn.setOnAction(actionEvent -> {
             warningMessage.setText("");
-            if(minutesDurationField.getText() == null){
+            if (minutesDurationField.getText() == null) {
                 warningMessage.setText("Fill in the duration");
                 return;
             }
 
-            if(moviePrice.getText() == null){
+            if (moviePrice.getText() == null) {
                 warningMessage.setText("Fill in the price");
                 return;
             }
 
-            if(movieTitle.getText() == null){
+            if (movieTitle.getText() == null) {
                 warningMessage.setText("Fill in the movie Title");
                 return;
             }
@@ -93,11 +88,11 @@ public class AddMovieWindow extends BaseForm {
         });
     }
 
-    private TableView<Movie> createMovieGrid() {
+    private TableView<Movie> createMovieTableView() {
         String[] columnNames = {"durationInMinutes", "Price", "Title"};
 
         this.generateDataForMovie(this.tableView, columnNames);
-        this.fillTableWithMovieData(this.tableView ,db.getAllMovies());
+        this.fillTableWithMovieData(this.tableView, db.getAllMovies());
         return this.tableView;
     }
 
@@ -128,6 +123,4 @@ public class AddMovieWindow extends BaseForm {
             table.getItems().addAll(movie);
         }
     }
-
-
 }

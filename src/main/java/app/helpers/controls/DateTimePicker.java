@@ -43,8 +43,8 @@ public class DateTimePicker extends DatePicker {
                 this.setDateTimeValue(LocalDateTime.parse(this.getEditor().getText(), formatter));
             } catch (DateTimeParseException e) {
                 if (
-                    this.getEditor().getText().matches("[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1]) (2[0-3]|[01][0-9]):[0-5][0-9]") &&
-                    this.getEditor().getText().length() == 16
+                        this.getEditor().getText().matches("[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1]) (2[0-3]|[01][0-9]):[0-5][0-9]") &&
+                                this.getEditor().getText().length() == 16
                 ) {
                     System.out.println("This should be a valid date format so i can update it!");
                     this.setDateTimeValue(LocalDateTime.parse(this.getEditor().getText(), formatter));

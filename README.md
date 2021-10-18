@@ -1,9 +1,7 @@
-# nosql-project
+## Admin
+username: JohnDoe@example.com <br />
+password: password
 
-## Service desk employee
-### username: kygffe@example.com
-### password: password
-
-## Employee
-### username: daggx@example.com
-### password: password
+## Normal User
+username: JaneDoe@example.com <br />
+password: password

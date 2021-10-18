@@ -1,35 +1,28 @@
 package app.views.windows;
 
 import app.database.Database;
+import app.helpers.controls.CustomSubmitBtn;
 import app.helpers.controls.NumberTextField;
 import app.model.TableHolderRooms;
 import app.model.Ticket;
-import app.views.BaseForm;
-import javafx.scene.Scene;
+import app.views.BaseVBoxLayout;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 
-public class PurchaseTicketWindow extends BaseForm {
+public class PurchaseTicketWindow extends BaseVBoxLayout {
 
     private final NumberTextField numberOfSeatsTextField = new NumberTextField();
     private final TextField ticketNameTextField = new TextField();
-    private final Button purchaseBtn = new Button("Purchase");
+    private final Button purchaseBtn = new CustomSubmitBtn("Purchase");
     private final Button clearBtnForCreatingTickets = new Button("Clear");
 
     public PurchaseTicketWindow(Database db) {
         super(db);
-        Scene mainScene = new Scene(layout);
-
-        this.setHeaderName("Purchase Tickets");
-        stage.setWidth(1500);
-        stage.setHeight(900);
-        stage.setScene(mainScene);
-
         formHolders.getChildren().addAll(formMenu, warningMessage);
-        layout.getChildren().addAll(this.createRoomGrids(), formHolders);
+        this.getChildren().addAll(this.createRoomGrids(), formHolders);
 
         roomOneTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
@@ -46,7 +39,7 @@ public class PurchaseTicketWindow extends BaseForm {
         });
     }
 
-    private void setUserForm(TableHolderRooms selectedItem, String roomName, int roomIndex, int showingIndex, TableView tableView){
+    private void setUserForm(TableHolderRooms selectedItem, String roomName, int roomIndex, int showingIndex, TableView tableView) {
         GridPane formMenu = getBasicGridPane();
 
         formMenu.add(new Label("Room:"), 0, 0, 1, 1);
@@ -74,22 +67,22 @@ public class PurchaseTicketWindow extends BaseForm {
             numberOfSeatsTextField.setText("");
             ticketNameTextField.setText("");
         });
-        formHolders.getChildren().set(0,formMenu);
+        formHolders.getChildren().set(0, formMenu);
     }
 
-    private void addTicketToShowing(int roomIndex, int showingIndex, String seats, TableView tableView){
+    private void addTicketToShowing(int roomIndex, int showingIndex, String seats, TableView tableView) {
         warningMessage.setText("");
-        if(numberOfSeatsTextField.getText() == null){
+        if (numberOfSeatsTextField.getText() == null) {
             warningMessage.setText("Fill in the amount of seats!");
             return;
         }
 
-        if(ticketNameTextField.getText() == null){
+        if (ticketNameTextField.getText() == null) {
             warningMessage.setText("Fill in your name");
             return;
         }
 
-        if(Integer.parseInt(seats) <= Integer.parseInt(numberOfSeatsTextField.getText())){
+        if (Integer.parseInt(seats) <= Integer.parseInt(numberOfSeatsTextField.getText())) {
             warningMessage.setText("no seats left!");
             return;
         }

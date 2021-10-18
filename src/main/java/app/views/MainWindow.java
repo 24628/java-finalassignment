@@ -3,14 +3,15 @@ package app.views;
 import app.database.Database;
 import app.helpers.DateParser;
 import app.helpers.Session;
-import app.helpers.controls.DateTimePicker;
 import app.model.Showing;
 import app.model.TableHolderRooms;
+import app.views.windows.AddMovieWindow;
+import app.views.windows.AddShowingWindow;
 import app.views.windows.Form_Login;
 import app.views.windows.PurchaseTicketWindow;
-import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
@@ -20,44 +21,51 @@ import javafx.stage.Stage;
 
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Objects;
 
-public class BaseForm {
+public class MainWindow {
 
     protected Stage stage;
     protected VBox layout;
     protected Button addMovieBtn;
     protected Button logoutBtn;
-    protected Button helpBtn;
+    protected Button purchaseBtn;
     protected Button addShowingBtn;
     protected GridPane form;
     protected Database db;
-    protected VBox formHolders = new VBox();
-    protected GridPane formMenu = new GridPane();
-    protected Label warningMessage = new Label();
     protected final TableView<TableHolderRooms> roomOneTableView = generateTable();
     protected final TableView<TableHolderRooms> roomTwoTableView = generateTable();
+    protected Scene mainScene;
 
-    private Label headerTitle = new Label();
+    private Label headerTitle = new Label("Purchase a Ticket");
 
     public Stage getStage() {
         return stage;
     }
 
-    public BaseForm(Database database) {
+    public MainWindow(Database database) {
         db = database;
         stage = new Stage();
         layout = new VBox();
-        layout.getChildren().addAll(this.createNavBar());
+        Scene mainScene = new Scene(layout);
+
+        stage.setTitle("Java Assignment Final!");
+        stage.setWidth(1600);
+        stage.setHeight(800);
+        stage.setScene(mainScene);
+
+        layout.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style.css")).toString());
+        layout.getChildren().addAll(this.createNavBar(), new PurchaseTicketWindow(db));
     }
 
-    protected VBox createNavBar(){
+    protected VBox createNavBar() {
         VBox container = new VBox();
         VBox header = new VBox();
         HBox nav_bar = new HBox();
 
         // labels for title and description
 
-        this.headerTitle.setFont(Font.font("Verdana", 30));
+        headerTitle.setFont(Font.font("Verdana", 30));
         header.setAlignment(Pos.TOP_LEFT);
         header.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
         header.getChildren().addAll(this.headerTitle);
@@ -66,17 +74,39 @@ public class BaseForm {
         logoutBtn = new Button("Logout");
         addMovieBtn = new Button("Add Movie");
         addShowingBtn = new Button("Add Showing");
-        helpBtn = new Button("Help");
+        purchaseBtn = new Button("Purchase Ticket");
+
+        logoutBtn.getStyleClass().add("navbar-btn");
+        addMovieBtn.getStyleClass().add("navbar-btn");
+        addShowingBtn.getStyleClass().add("navbar-btn");
+        purchaseBtn.getStyleClass().add("navbar-btn");
 
         // add all children and set alignment to right
         nav_bar.setAlignment(Pos.TOP_LEFT);
         nav_bar.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
-        nav_bar.getChildren().addAll(addMovieBtn, addShowingBtn, helpBtn, logoutBtn);
+        if (Session.isAdmin())
+            nav_bar.getChildren().addAll(addMovieBtn, addShowingBtn, purchaseBtn, logoutBtn);
+        else
+            nav_bar.getChildren().addAll(purchaseBtn, logoutBtn);
 
         logoutBtn.setOnAction(actionEvent -> {
             Session.destroy();
+            this.getStage().close();
             Form_Login form = new Form_Login(db);
             form.getStage().show();
+        });
+
+        addMovieBtn.setOnAction(actionEvent -> {
+            layout.getChildren().set(1, new AddMovieWindow(db));
+            headerTitle.setText("Add Movie");
+        });
+        addShowingBtn.setOnAction(actionEvent -> {
+            layout.getChildren().set(1, new AddShowingWindow(db));
+            headerTitle.setText("Add Showing");
+        });
+        purchaseBtn.setOnAction(actionEvent -> {
+            layout.getChildren().set(1, new PurchaseTicketWindow(db));
+            headerTitle.setText("Purchase a Ticket");
         });
 
         container.setAlignment(Pos.CENTER);
@@ -88,13 +118,12 @@ public class BaseForm {
         this.headerTitle.setText(headerName);
     }
 
-    protected GridPane getBasicGridPane(){
+    protected GridPane getBasicGridPane() {
         GridPane formMenu = new GridPane();
         formMenu.setAlignment(Pos.CENTER);
 
         formMenu.setHgap(10);
         formMenu.setVgap(10);
-        formMenu.setGridLinesVisible(true);
         return formMenu;
     }
 
@@ -105,7 +134,6 @@ public class BaseForm {
 
         gridPane.setHgap(10);
         gridPane.setVgap(10);
-        gridPane.setGridLinesVisible(true);
 
         String[] columnNames = {"Start", "End", "Title", "Seats", "Price"};
 

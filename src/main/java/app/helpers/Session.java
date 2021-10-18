@@ -1,5 +1,6 @@
 package app.helpers;
 
+import app.enums.UserType;
 import app.model.User;
 
 public final class Session {
@@ -12,7 +13,7 @@ public final class Session {
     }
 
     public static Session getInstance(User user) {
-        if(instance == null) {
+        if (instance == null) {
             instance = new Session(user);
         }
         return instance;
@@ -26,8 +27,8 @@ public final class Session {
         instance = null;
     }
 
-    /*public static boolean isServiceDeskEmployee(){
-        return user instanceof ServiceDeskEmployee;
+    public static boolean isAdmin() {
+        return user.getUserType() == UserType.admin;
     }
-     */
+
 }
