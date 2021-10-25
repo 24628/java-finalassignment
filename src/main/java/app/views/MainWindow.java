@@ -5,10 +5,9 @@ import app.helpers.DateParser;
 import app.helpers.Session;
 import app.model.Showing;
 import app.model.TableHolderRooms;
-import app.views.windows.AddMovieWindow;
-import app.views.windows.AddShowingWindow;
-import app.views.windows.Form_Login;
-import app.views.windows.PurchaseTicketWindow;
+import app.views.windows.*;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -18,6 +17,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -56,6 +56,17 @@ public class MainWindow {
 
         layout.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style.css")).toString());
         layout.getChildren().addAll(this.createNavBar(), new PurchaseTicketWindow(db));
+
+        stage.setOnCloseRequest((EventHandler<WindowEvent>) event -> {
+            if(Session.getUser() != null) {
+                CustomAlert alert = new CustomAlert(db, "Close window", "INFO");
+                alert.getStage().show();
+                this.getStage().close();
+            } else {
+                Platform.exit();
+                System.exit(0);
+            }
+        });
     }
 
     protected VBox createNavBar() {

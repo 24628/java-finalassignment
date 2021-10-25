@@ -20,6 +20,7 @@ public final class Session {
     }
 
     public static User getUser() {
+        if(instance == null) return null;
         return user;
     }
 
