@@ -3,6 +3,7 @@ package app.views.windows;
 import app.database.Database;
 import app.helpers.controls.CustomSubmitBtn;
 import app.helpers.controls.NumberTextField;
+import app.model.Showing;
 import app.model.TableHolderRooms;
 import app.model.Ticket;
 import app.views.BaseVBoxLayout;
@@ -12,17 +13,32 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PurchaseTicketWindow extends BaseVBoxLayout {
 
     private final NumberTextField numberOfSeatsTextField = new NumberTextField();
     private final TextField ticketNameTextField = new TextField();
     private final Button purchaseBtn = new CustomSubmitBtn("Purchase");
     private final Button clearBtnForCreatingTickets = new Button("Clear");
+    private final TextField searchForInput = new TextField();
 
     public PurchaseTicketWindow(Database db) {
         super(db);
         formHolders.getChildren().addAll(formMenu, warningMessage);
-        this.getChildren().addAll(this.createRoomGrids(), formHolders);
+        this.getChildren().addAll(searchForInput, this.createRoomGrids(), formHolders);
+
+        searchForInput.setOnKeyPressed(event -> {
+            if(searchForInput.getText().length() > 2){
+                this.fillTableWithData(roomOneTableView, filterList(db.getAllRooms().get(0).getShowingList(), searchForInput.getText()));
+                this.fillTableWithData(roomTwoTableView, filterList(db.getAllRooms().get(1).getShowingList(), searchForInput.getText()));
+            } else {
+                this.fillTableWithData(roomOneTableView, db.getAllRooms().get(0).getShowingList());
+                this.fillTableWithData(roomTwoTableView, db.getAllRooms().get(1).getShowingList());
+            }
+
+        });
 
         roomOneTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
@@ -37,6 +53,18 @@ public class PurchaseTicketWindow extends BaseVBoxLayout {
                 setUserForm(newSelection, "Room 2", 1, roomTwoTableView.getSelectionModel().getSelectedIndex(), roomTwoTableView);
             }
         });
+    }
+
+    private List<Showing> filterList(List<Showing> list, String filter){
+        List<Showing> filterList = new ArrayList<>();
+
+        for(Showing s : list){
+            if(s.getMovie().getTitle().contains(filter)){
+                filterList.add(s);
+            }
+        }
+
+        return filterList;
     }
 
     private void setUserForm(TableHolderRooms selectedItem, String roomName, int roomIndex, int showingIndex, TableView tableView) {
@@ -96,6 +124,4 @@ public class PurchaseTicketWindow extends BaseVBoxLayout {
 
         this.fillTableWithData(tableView, db.getAllRooms().get(roomIndex).getShowingList());
     }
-
-
 }
