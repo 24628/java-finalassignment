@@ -13,8 +13,14 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.util.StringConverter;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.Writer;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AddShowingWindow extends BaseVBoxLayout {
 
@@ -23,6 +29,7 @@ public class AddShowingWindow extends BaseVBoxLayout {
     private DateTimePicker dateTimePicker = new DateTimePicker();
     private final Button addShowingBtnToRoom = new CustomSubmitBtn("Add Showing");
     private final Button clearBtnForCreatingShowing = new Button("Clear");
+    private final Button exportShowingsBtn = new CustomSubmitBtn("Export Showings");
     private final Label nOfSeats = new Label();
     private final Label movieEndTime = new Label();
     private final Label moviePrice = new Label();
@@ -34,7 +41,7 @@ public class AddShowingWindow extends BaseVBoxLayout {
         super(database);
 
         formHolders.getChildren().addAll(this.formMenu, warningMessage);
-        this.getChildren().addAll(this.createRoomGrids(), formHolders);
+        this.getChildren().addAll(exportShowingsBtn, this.createRoomGrids(), formHolders);
 
         setShowingForm();
 
@@ -92,6 +99,46 @@ public class AddShowingWindow extends BaseVBoxLayout {
             System.out.println("i dod update not?");
             currentSelectedLocalDateTime = dateTimePicker.getDateTimeValue();
             fillFormCorrectly();
+        });
+
+        exportShowingsBtn.setOnAction(actionEvent -> {
+            try {
+                Writer writer = null;
+                try {
+                    File file = new File("Showings.csv");
+                    writer = new BufferedWriter(new FileWriter(file));
+                    for (Showing s : db.getAllRooms().get(0).getShowingList()) {
+
+                        String text = DateParser.toString(s.getStartTime()) + ","
+                                + DateParser.toString(s.getStartTime().plusMinutes(s.getMovie().getDurationInMinutes())) + ","
+                                + "Room 1," +
+                                s.getMovie().getTitle() + "," +
+                                s.getCurrentSeats() + "," +
+                                s.getMovie().getPrice() + "," +"\n";
+
+                        writer.write(text);
+                    }
+
+                    for (Showing s : db.getAllRooms().get(1).getShowingList()) {
+
+                        String text = DateParser.toString(s.getStartTime()) + ","
+                                + DateParser.toString(s.getStartTime().plusMinutes(s.getMovie().getDurationInMinutes())) + ","
+                                + "Room 2," +
+                                s.getMovie().getTitle() + "," +
+                                s.getCurrentSeats() + "," +
+                                s.getMovie().getPrice() + "," +"\n";
+
+                        writer.write(text);
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                finally {
+
+                    writer.flush();
+                    writer.close();
+                }
+            } catch (Exception ignored){}
         });
     }
 
@@ -186,6 +233,5 @@ public class AddShowingWindow extends BaseVBoxLayout {
 
         formHolders.getChildren().set(0, this.formMenu);
     }
-
 
 }
