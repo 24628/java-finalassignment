@@ -81,9 +81,10 @@ public class Form_Login extends MainWindow {
         }
         Session.getInstance(loggedInUser);
 
-        this.getStage().close();
         MainWindow mw = new MainWindow(db);
         mw.getStage().show();
+
+        this.getStage().close();
     }
 
     private User findUser(List<User> userList, String email, String password) {
